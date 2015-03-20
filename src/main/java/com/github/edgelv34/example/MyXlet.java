@@ -64,6 +64,7 @@ public class MyXlet implements Xlet {
             final Object key = forloopEnumeration.nextElement();
             final Object val = applicationProperties.get(key);
             System.out.println("property: " + key + " = " + val);
+
         }
     }
 
