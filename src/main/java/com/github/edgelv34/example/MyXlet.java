@@ -3,6 +3,10 @@
 package com.github.edgelv34.example;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
 import javax.tv.xlet.Xlet;
 import javax.tv.xlet.XletContext;
 import javax.tv.xlet.XletStateChangeException;
@@ -15,24 +19,70 @@ import javax.tv.xlet.XletStateChangeException;
 public class MyXlet implements Xlet {
 
 
+    // The properties holding entries from '/application.properties'
+    final Properties applicationProperties = new Properties();
+
+
     public void initXlet(final XletContext ctx)
         throws XletStateChangeException {
+
         System.out.println("initXlet(" + ctx + ")");
+
+        {
+            final InputStream resource = getClass()
+                .getResourceAsStream("/application.properties");
+            if (resource == null) {
+                throw new XletStateChangeException(
+                    "resource not found: application.properties");
+            }
+            try {
+                try {
+                    applicationProperties.load(resource);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            } finally {
+                try {
+                    resource.close();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }
+
+        // prints entries of properties using while loop.
+        final Enumeration w = applicationProperties.propertyNames();
+        while (w.hasMoreElements()) {
+            final Object key = w.nextElement();
+            final Object val = applicationProperties.get(key);
+            System.out.println("property: " + key + " = " + val);
+        }
+
+        // prints entries of properties using for loop.
+        for (final Enumeration f = applicationProperties.propertyNames();
+             f.hasMoreElements();) {
+            final Object key = f.nextElement();
+            final Object val = applicationProperties.get(key);
+            System.out.println("property: " + key + " = " + val);
+        }
     }
 
 
     public void startXlet() throws XletStateChangeException {
+
         System.out.println("startXlet()");
     }
 
 
     public void pauseXlet() {
+
         System.out.println("pauseXlet()");
     }
 
 
     public void destroyXlet(final boolean unconditional) // unconditional=무조건
         throws XletStateChangeException {
+
         System.out.println("destroyXlet(" + unconditional + ")");
 
         if (unconditional) { // 무조건 죽어라
