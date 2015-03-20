@@ -51,17 +51,17 @@ public class MyXlet implements Xlet {
         }
 
         // prints entries of properties using while loop.
-        final Enumeration w = applicationProperties.propertyNames();
-        while (w.hasMoreElements()) {
-            final Object key = w.nextElement();
+        final Enumeration whileloopEnumeration = applicationProperties.propertyNames();
+        while (whileloopEnumeration.hasMoreElements()) {
+            final Object key = whileloopEnumeration.nextElement();
             final Object val = applicationProperties.get(key);
             System.out.println("property: " + key + " = " + val);
         }
 
         // prints entries of properties using for loop.
-        for (final Enumeration f = applicationProperties.propertyNames();
-             f.hasMoreElements();) {
-            final Object key = f.nextElement();
+        for (final Enumeration forloopEnumeration = applicationProperties.propertyNames();
+             forloopEnumeration.hasMoreElements();) {
+            final Object key = forloopEnumeration.nextElement();
             final Object val = applicationProperties.get(key);
             System.out.println("property: " + key + " = " + val);
         }

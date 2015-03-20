@@ -16,14 +16,14 @@ public class MyXletTest {
 
 
     @Test
-    public void loadDestroy() throws XletStateChangeException {
+    public void testloadDestroy() throws XletStateChangeException {
         final Xlet mx = new MyXlet();   // LOADED
         mx.destroyXlet(true);             // DESTROYED
     }
 
 
     @Test
-    public void loadInitDestroy() throws XletStateChangeException {
+    public void testLoadInitDestroy() throws XletStateChangeException {
         final Xlet mx = new MyXlet();   // LOADED
         mx.initXlet(null);                // PAUSED
         mx.destroyXlet(true);             // DESTROYED
@@ -31,7 +31,7 @@ public class MyXletTest {
 
 
     @Test
-    public void loadInitStartDestroy() throws XletStateChangeException {
+    public void testLoadInitStartDestroy() throws XletStateChangeException {
         final Xlet mx = new MyXlet();   // LOADED
         mx.initXlet(null);                // PAUSED
         mx.startXlet();                   // ACTIVE
@@ -40,7 +40,7 @@ public class MyXletTest {
 
 
     @Test
-    public void loadInitStartPauseDestroy() throws XletStateChangeException {
+    public void testLoadInitStartPauseDestroy() throws XletStateChangeException {
         final Xlet mx = new MyXlet();   // LOADED
         mx.initXlet(null);                // PAUSED
         mx.startXlet();                   // ACTIVE
