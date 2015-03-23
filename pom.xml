@@ -136,6 +136,20 @@
   <!-- Environment Settings -->
   <profiles>
     <profile>
+      <id>development</id>
+      <properties>
+        <enviroment.id>development</enviroment.id>
+        <server_address>http://development.server.com/service</server_address>
+      </properties>
+    </profile>
+    <profile>
+      <id>integration</id>
+      <properties>
+        <enviroment.id>integration</enviroment.id>
+        <server_address>http://integration.server.com/service</server_address>
+      </properties>
+    </profile>
+    <profile>
       <id>staging</id>
       <properties>
         <enviroment.id>staging</enviroment.id>
