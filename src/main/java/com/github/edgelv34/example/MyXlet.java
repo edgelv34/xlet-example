@@ -3,12 +3,10 @@
 package com.github.edgelv34.example;
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -18,7 +16,10 @@ import javax.tv.xlet.XletStateChangeException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.kxml2.kdom.Document;
+import org.kxml2.kdom.Element;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 
 /**
@@ -134,6 +135,139 @@ public class MyXlet implements Xlet {
                             System.out.println(
                                 "contact[" + i + "].phone.office: "
                                 + phone.get("office"));
+                        }
+                    } finally {
+                        reader.close();
+                    }
+                } else {
+                    System.out.println(
+                        "unexpected response code: " + responseCode);
+                }
+            } finally {
+                connection.disconnect();
+                System.out.println("disconnected");
+            }
+        } catch (final Exception e) {
+            e.printStackTrace(System.err);
+        }
+
+
+        // open and parse http://www.simplyhired.com/c/add-jobs/example-feed.xml
+        // using xmlpull
+        try {
+            final URL url = new URL(
+                "http://www.simplyhired.com/c/add-jobs/example-feed.xml");
+            System.out.println("Request url : " + url);
+            final HttpURLConnection connection
+                = (HttpURLConnection) url.openConnection();
+            //connection.setRequestMethod("GET");   // Default is "GET".
+            //connection.setDoInput(true);   // Default is true.
+            //connection.setDoOutput(false); // Default is false.
+            connection.connect();
+            try {
+                System.out.println("connected");
+                final int responseCode = connection.getResponseCode();
+                System.out.println("response code : " + responseCode);
+                if (responseCode == 200) {
+                    System.out.println(
+                        "Content-Type: "
+                        + connection.getHeaderField("Content-Type"));
+                    final InputStreamReader reader = new InputStreamReader(
+                        connection.getInputStream(), "US-ASCII");
+                    try {
+                        final XmlPullParserFactory factory
+                            = XmlPullParserFactory.newInstance();
+                        final XmlPullParser parser = factory.newPullParser();
+                        parser.setInput(reader);
+                        parser.require(XmlPullParser.START_DOCUMENT, null,
+                                       null);
+                        parser.nextTag();
+                        parser.require(XmlPullParser.START_TAG, null, "jobs");
+                        for (int i = 1; parser.nextTag() == XmlPullParser.START_TAG; i++) {
+                            parser.require(XmlPullParser.START_TAG, null, "job");
+                            parser.nextTag();
+                            parser.require(XmlPullParser.START_TAG, null, "title");
+                            final String title = parser.nextText();
+                            parser.require(XmlPullParser.END_TAG, null, "title");
+                            System.out.println("jobs/job[" + i + "]/title: " + title);
+                            parser.nextTag(); // <job-board-name>
+                            parser.nextText();
+                            parser.require(XmlPullParser.END_TAG, null, "job-board-name");
+                            parser.nextTag();
+                            parser.require(XmlPullParser.START_TAG, null, "job-board-url");
+                            final String jobBoardUrl = parser.nextText();
+                            parser.require(XmlPullParser.END_TAG, null, "job-board-url");
+                            System.out.println("jobBoardUrl: " + jobBoardUrl);
+                            while (!(parser.next() == XmlPullParser.START_TAG
+                                     && parser.getName().equals("description"))) {
+                            }
+                            parser.require(XmlPullParser.START_TAG, null, "description");
+                            parser.nextTag();
+                            parser.require(XmlPullParser.START_TAG, null, "summary");
+                            final String summary = parser.nextText();
+                            parser.require(XmlPullParser.END_TAG, null, "summary");
+                            System.out.println("/jobs/job[" + i + "]/description/summary: " + summary);
+                            while (!(parser.next() == XmlPullParser.END_TAG
+                                     && parser.getName().equals("job"))) {
+                            }
+                            parser.require(XmlPullParser.END_TAG, null, "job");
+                        }
+                        parser.require(XmlPullParser.END_TAG, null, "jobs");
+                    } finally {
+                        reader.close();
+                    }
+                } else {
+                    System.out.println(
+                        "unexpected response code: " + responseCode);
+                }
+            } finally {
+                connection.disconnect();
+                System.out.println("disconnected");
+            }
+        } catch (final Exception e) {
+            e.printStackTrace(System.err);
+        }
+
+        // open and parse http://www.simplyhired.com/c/add-jobs/example-feed.xml
+        // using kdom
+        try {
+            final URL url = new URL(
+                "http://www.simplyhired.com/c/add-jobs/example-feed.xml");
+            System.out.println("Request url : " + url);
+            final HttpURLConnection connection
+                = (HttpURLConnection) url.openConnection();
+            //connection.setRequestMethod("GET");   // Default is "GET".
+            //connection.setDoInput(true);   // Default is true.
+            //connection.setDoOutput(false); // Default is false.
+            connection.connect();
+            try {
+                System.out.println("connected");
+                final int responseCode = connection.getResponseCode();
+                System.out.println("response code : " + responseCode);
+                if (responseCode == 200) {
+                    System.out.println(
+                        "Content-Type: "
+                        + connection.getHeaderField("Content-Type"));
+                    final InputStreamReader reader = new InputStreamReader(
+                        connection.getInputStream(), "US-ASCII");
+                    try {
+                        final XmlPullParserFactory factory
+                            = XmlPullParserFactory.newInstance();
+                        final XmlPullParser parser = factory.newPullParser();
+                        parser.setInput(reader);
+                        parser.setFeature(null, true);
+                        final Document document = new Document();
+                        document.parse(parser);
+                        final Element jobs = document.getRootElement();
+                        final int childCount = jobs.getChildCount();
+                        for (int i = 0; i < childCount; i++) {
+                            final Object child = jobs.getChild(i);
+                            if (!(child instanceof Element)) {
+                                continue;
+                            }
+                            final Element job = (Element) child;
+                            final Element title = job.getElement(null, "title");
+                            System.out.println("/jobs/job[" + (i + 1) + "]/title: " + title.getText(0));
                         }
                     } finally {
                         reader.close();

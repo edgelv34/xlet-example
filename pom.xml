@@ -21,6 +21,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>net.sf.kxml</groupId>
+      <artifactId>kxml2</artifactId>
+      <version>2.3.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
@@ -87,11 +93,17 @@
           </libs>
           <options>
             <option>-keep public class * implements javax.tv.xlet.Xlet { public void *; }</option>
+            <option>-keep public class org.kxml2.io.KXmlParser { *; }</option>
+            <option>-keep public class org.kxml2.io.KXmlSerializer { *; }</option>
           </options>
           <exclusions>
             <exclusion>
               <groupId>com.googlecode.json-simple</groupId>
               <artifactId>json-simple</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>net.sf.kxml</groupId>
+              <artifactId>kxml2</artifactId>
             </exclusion>
           </exclusions>
         </configuration>
