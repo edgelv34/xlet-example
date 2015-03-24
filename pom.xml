@@ -86,8 +86,14 @@
             <lib>${java.secure.socket.extension.classes}</lib>
           </libs>
           <options>
-            <option>-keep public class * { public protected *; }</option>
+            <option>-keep public class * implements javax.tv.xlet.Xlet { public void *; }</option>
           </options>
+          <exclusions>
+            <exclusion>
+              <groupId>com.googlecode.json-simple</groupId>
+              <artifactId>json-simple</artifactId>
+            </exclusion>
+          </exclusions>
         </configuration>
         <dependencies>
           <dependency>
