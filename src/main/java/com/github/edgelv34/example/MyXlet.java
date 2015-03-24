@@ -255,7 +255,6 @@ public class MyXlet implements Xlet {
                             = XmlPullParserFactory.newInstance();
                         final XmlPullParser parser = factory.newPullParser();
                         parser.setInput(reader);
-                        parser.setFeature(null, true);
                         final Document document = new Document();
                         document.parse(parser);
                         final Element jobs = document.getRootElement();
