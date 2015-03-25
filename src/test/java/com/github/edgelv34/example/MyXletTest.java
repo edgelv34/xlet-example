@@ -5,12 +5,13 @@ package com.github.edgelv34.example;
 
 import javax.tv.xlet.Xlet;
 import javax.tv.xlet.XletStateChangeException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
 /**
  *
- * @author Administrator
+ * @author Park, Jaeseo &lt;edgelv34 at gmail.com&gt;
  */
 public class MyXletTest {
 
@@ -23,27 +24,34 @@ public class MyXletTest {
 
 
     @Test
+    @Ignore
     public void testLoadInitDestroy() throws XletStateChangeException {
-        final Xlet mx = new MyXlet();   // LOADED
+
+        final Xlet mx = new MyXlet();     // LOADED
         mx.initXlet(null);                // PAUSED
         mx.destroyXlet(true);             // DESTROYED
     }
 
 
     @Test
+    @Ignore
     public void testLoadInitStartDestroy() throws XletStateChangeException {
-        final Xlet mx = new MyXlet();   // LOADED
+
+        final Xlet mx = new MyXlet();     // LOADED
         mx.initXlet(null);                // PAUSED
-        // mx.startXlet();                   // ACTIVE
+        mx.startXlet();                   // ACTIVE
         mx.destroyXlet(true);             // DESTROYED
     }
 
 
     @Test
-    public void testLoadInitStartPauseDestroy() throws XletStateChangeException {
-        final Xlet mx = new MyXlet();   // LOADED
+    @Ignore
+    public void testLoadInitStartPauseDestroy()
+        throws XletStateChangeException {
+
+        final Xlet mx = new MyXlet();     // LOADED
         mx.initXlet(null);                // PAUSED
-        //mx.startXlet();                   // ACTIVE
+        mx.startXlet();                   // ACTIVE
         mx.pauseXlet();                   // PAUSED
         mx.destroyXlet(true);             // DESTROYED
     }
