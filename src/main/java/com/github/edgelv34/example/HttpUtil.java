@@ -84,7 +84,9 @@ public final class HttpUtil {
     }
 
 
-    //@todo javadoc
+    /**
+     * use parse XmlPull before InputstreamReader close.
+     */
     public static interface XmlPullCallback {
 
 
@@ -95,7 +97,18 @@ public final class HttpUtil {
     }
 
 
-    //@todo javadoc
+    /**
+     *
+     * @param spec http url to prase
+     * @param charset the charset to use
+     * @param callback use parse XmlPull before InputstreamReader close
+     *
+     * @return if parse Successed true, else false
+     *
+     * @throws MalformedURLException if the url is malformed
+     * @throws IOException if an I/O error occurs.
+     * @throws XmlPullParserException if fail to pares XmlPull
+     */
     public static boolean parseXmlPull(final String spec,
                                        final String charset,
                                        final XmlPullCallback callback)
@@ -106,10 +119,12 @@ public final class HttpUtil {
         }
 
         if (charset == null) {
-            throw new NullPointerException("null spsec");
+            throw new NullPointerException("null charset");
         }
 
-        //@todo parameter check
+        if (callback == null) {
+            throw new NullPointerException("null XmlPullCallback");
+        }
 
         final URL url = new URL(spec);
         final HttpURLConnection connection
@@ -153,9 +168,9 @@ public final class HttpUtil {
      * @return an instance of {@link Document} or {@code null} if http response
      * code is not {@code 200}.
      *
-     * @throws MalformedURLException
-     * @throws IOException
-     * @throws XmlPullParserException
+     * @throws MalformedURLException if the url is malformed
+     * @throws IOException if an I/O error occurs
+     * @throws XmlPullParserException if fail to parse XmlPull
      */
     public static Document parseKxmlDocument(final String spec,
                                              final String charset)
@@ -166,7 +181,7 @@ public final class HttpUtil {
         }
 
         if (charset == null) {
-            throw new NullPointerException("null spsec");
+            throw new NullPointerException("null charset");
         }
 
         final URL url = new URL(spec);
