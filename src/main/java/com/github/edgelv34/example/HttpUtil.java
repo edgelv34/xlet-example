@@ -84,62 +84,8 @@ public final class HttpUtil {
     }
 
 
-//    /**
-//     * Parses given url and returns an instance of {@link XmlPullParser}.
-//     *
-//     * @param spec http url to parse
-//     * @param charset the charset to use
-//     *
-//     * @return an instance of {@link XmlPullParser} or {@code null} if http
-//     * response code is not {@code 200}.
-//     *
-//     * @throws MalformedURLException if the url is malformed
-//     * @throws IOException if an I/O error occurs.
-//     * @throws XmlPullParserException if failed to parse
-//     */
-//    public static XmlPullParser parseXmlPull(final String spec,
-//                                             final String charset)
-//        throws MalformedURLException, IOException, XmlPullParserException {
-//
-//        if (spec == null) {
-//            throw new NullPointerException("null spsec");
-//        }
-//
-//        if (charset == null) {
-//            throw new NullPointerException("null spsec");
-//        }
-//
-//        final URL url = new URL(spec);
-//        final HttpURLConnection connection
-//            = (HttpURLConnection) url.openConnection();
-//        connection.connect();
-//        try {
-//            System.out.println("connected");
-//            final int responseCode = connection.getResponseCode();
-//            System.out.println("response code : " + responseCode);
-//            if (responseCode == 200) {
-//                final InputStreamReader reader = new InputStreamReader(
-//                    connection.getInputStream(), charset);
-//                try {
-//                    final XmlPullParserFactory factory
-//                        = XmlPullParserFactory.newInstance();
-//                    final XmlPullParser parser = factory.newPullParser();
-//                    parser.setInput(reader);
-//                    return parser;
-//                } finally {
-//                    reader.close();
-//                }
-//            } else {
-//                System.out.println(
-//                    "unexpected response code: " + responseCode);
-//                return null;
-//            }
-//        } finally {
-//            connection.disconnect();
-//            System.out.println("disconnected");
-//        }
-//    }
-    public static interface Visitor {
+    //@todo javadoc
+    public static interface XmlPullCallback {
 
 
         void visit(XmlPullParser parser)
@@ -149,9 +95,10 @@ public final class HttpUtil {
     }
 
 
-    public static boolean parseXmlPull2(final String spec,
-                                        final String charset,
-                                        final Visitor visitor)
+    //@todo javadoc
+    public static boolean parseXmlPull(final String spec,
+                                       final String charset,
+                                       final XmlPullCallback callback)
         throws MalformedURLException, IOException, XmlPullParserException {
 
         if (spec == null) {
@@ -161,6 +108,8 @@ public final class HttpUtil {
         if (charset == null) {
             throw new NullPointerException("null spsec");
         }
+
+        //@todo parameter check
 
         final URL url = new URL(spec);
         final HttpURLConnection connection
@@ -178,7 +127,7 @@ public final class HttpUtil {
                         = XmlPullParserFactory.newInstance();
                     final XmlPullParser parser = factory.newPullParser();
                     parser.setInput(reader);
-                    visitor.visit(parser);
+                    callback.visit(parser);
                     return true;
                 } finally {
                     reader.close();

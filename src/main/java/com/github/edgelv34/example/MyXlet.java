@@ -3,8 +3,9 @@
 package com.github.edgelv34.example;
 
 
-import com.github.edgelv34.example.HttpUtil.Visitor;
+import com.github.edgelv34.example.HttpUtil.XmlPullCallback;
 import java.awt.Container;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -12,6 +13,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import javax.media.Player;
 import javax.tv.graphics.TVContainer;
+import javax.tv.media.AWTVideoSize;
+import javax.tv.media.AWTVideoSizeControl;
 import javax.tv.service.selection.ServiceContentHandler;
 import javax.tv.service.selection.ServiceContext;
 import javax.tv.service.selection.ServiceContextException;
@@ -180,10 +183,10 @@ public class MyXlet implements Xlet {
 //        }
 
         try {
-            final boolean responseOk = HttpUtil.parseXmlPull2(
+            final boolean responseOk = HttpUtil.parseXmlPull(
                 "http://www.simplyhired.com/c/add-jobs/example-feed.xml",
                 "US-ASCII",
-                new Visitor() {
+                new XmlPullCallback() {
 
 
                     public void visit(final XmlPullParser parser)
@@ -254,11 +257,13 @@ public class MyXlet implements Xlet {
 
         final Container rootContainer
             = TVContainer.getRootContainer(xletContext);
-
-
-        System.out.println(
-            "rootContainer: " + rootContainer);
-
+        System.out.println("rootContainer: " + rootContainer);
+        System.out.println("rootContainer Maximum Size: "
+                           + rootContainer.getMaximumSize());
+        System.out.println("rootContainer Maximum Size: "
+                           + rootContainer.getMinimumSize());
+        System.out.println("rootContainer Maximum Size: "
+                           + rootContainer.getPreferredSize());
 
         try {
             final Class clazz = Class.forName("org.havi.ui.HSceneFactory");
@@ -267,14 +272,20 @@ public class MyXlet implements Xlet {
             final Object instance = getInstance.invoke(null, new Object[0]);
             final Method getDefaultHScene
                 = clazz.getMethod("getDefaultHScene", new Class[0]);
-            final Object defaultHScene
-                = getDefaultHScene.invoke(instance, new Object[0]);
+            final Container defaultHScene
+                = (Container) getDefaultHScene.invoke(instance, new Object[0]);
             System.out.println("defaultHScene: " + defaultHScene);
+            System.out.println("defaultHScene Maximum Size: "
+                               + defaultHScene.getMaximumSize());
+            System.out.println("defaultHScene Maximum Size: "
+                               + defaultHScene.getMinimumSize());
+            System.out.println("defaultHScene Maximum Size: "
+                               + defaultHScene.getPreferredSize());
         } catch (final Exception e) {
             e.printStackTrace();
         }
 
-
+        Player player = null;
         {
             final ServiceContextFactory f = ServiceContextFactory.getInstance();
             try {
@@ -285,15 +296,41 @@ public class MyXlet implements Xlet {
                         "serviceContentHandler[" + i + "]: " + c[i]);
                     if (c[i] instanceof ServiceMediaHandler) {
                         final Player p = (ServiceMediaHandler) c[i];
-                        System.out.println("\t-> player: " + p);
+                        System.out.println("\t-> is a player: " + p);
+                        if (player == null) {
+                            player = p;
+                        }
                     }
                 }
             } catch (final ServiceContextException sce) {
                 sce.printStackTrace();
             }
         }
+        System.out.println("(first) player: " + player);
 
-
+        if (player != null) {
+            // resize to 400x300
+            final AWTVideoSizeControl control
+                = (AWTVideoSizeControl) player.getControl(
+                    "javax.tv.media.AWTVideoSizeControl");
+            if (control == null) {
+                // not supported?
+            } else {
+                System.out.println("control: " + control);
+                final Rectangle source
+                    = new Rectangle(control.getSourceVideoSize());
+                System.out.println("source: " + source);
+                final Rectangle target = new Rectangle(400, 300);
+                System.out.println("target: " + target);
+                final AWTVideoSize desired = new AWTVideoSize(source, target);
+                System.out.println("disired: " + desired);
+                final AWTVideoSize checked = control.checkSize(desired);
+                System.out.println("checked: " + checked);
+                final boolean resized = control.setSize(checked);
+                System.out.println("resized: " + resized);
+                System.out.println("control.size: " + control.getSize());
+            }
+        }
     }
 
 
